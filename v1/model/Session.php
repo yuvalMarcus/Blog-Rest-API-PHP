@@ -15,6 +15,9 @@ class Session extends DataBase {
     public function all(): array {
 
         $stmt = $this->conn->query('SELECT * FROM ' . $this->table);
+        if (!$stmt) {
+            return [];
+        }
         $result = $stmt->fetchAll();
         return $result;
     }
@@ -22,6 +25,9 @@ class Session extends DataBase {
     public function findById() {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'id' => $session->id
         ]);
@@ -32,6 +38,9 @@ class Session extends DataBase {
     public function findByAccessToken() {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE accesstoken = :accesstoken AND id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'accesstoken' => $session->accesstoken,
             'id' => $session->id
@@ -43,6 +52,9 @@ class Session extends DataBase {
     public function findByRefreshToken() {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE accesstoken = :accesstoken AND refreshtoken = :refreshtoken AND id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'accesstoken' => $session->accesstoken,
             'refreshtoken' => $session->refreshtoken,
@@ -69,6 +81,9 @@ class Session extends DataBase {
     public function udpade(\controller\Session $session) {
 
         $stmt = $this->conn->prepare('UPDATE ' . $this->table . ' SET userid = :userid, accesstoken = :accesstoken, accesstokenexpiry = :accesstokenexpiry, refreshtoken = :refreshtoken, refreshtokenexpiry = :refreshtokenexpiry WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'userid' => $session->userid,
             'accesstoken' => $session->accesstoken,
@@ -84,6 +99,9 @@ class Session extends DataBase {
     public function delete(\controller\Session $session) {
 
         $stmt = $this->conn->prepare('DELETE FROM ' . $this->table . ' WHERE accesstoken = :accesstoken AND id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'accesstoken' => $session->accesstoken,
             'id' => $session->id

@@ -7,18 +7,17 @@ class Post extends DataBase {
     private $table;
 
     public function __construct() {
-        try {
-            parent::__construct();
-        } catch (Exception $ex) {
-            throw new $ex;
-        }
+        parent::__construct();
 
         $this->table = 'post';
     }
 
     public function all(): array {
-        
+
         $stmt = $this->conn->query('SELECT * FROM ' . $this->table);
+        if (!$stmt) {
+            return [];
+        }
         $result = $stmt->fetchAll();
         return $result;
     }
@@ -26,6 +25,9 @@ class Post extends DataBase {
     public function find(int $id) {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'id' => $id
         ]);
@@ -36,6 +38,9 @@ class Post extends DataBase {
     public function add(\controller\Post $post) {
 
         $stmt = $this->conn->prepare('INSERT INTO ' . $this->table . ' (name, content, photo) VALUES (:name, :content, :photo)');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'name' => $post->name,
             'content' => $post->content,
@@ -48,6 +53,9 @@ class Post extends DataBase {
     public function udpade(\controller\Post $post) {
 
         $stmt = $this->conn->prepare('UPDATE ' . $this->table . ' SET name = :name, content = :content, photo = :photo WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'name' => $post->name,
             'content' => $post->content,
@@ -61,6 +69,9 @@ class Post extends DataBase {
     public function delete(\controller\Post $post) {
 
         $stmt = $this->conn->prepare('DELETE FROM ' . $this->table . ' WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'id' => $post->id
         ]);

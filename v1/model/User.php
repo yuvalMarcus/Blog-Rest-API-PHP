@@ -15,6 +15,9 @@ class User extends DataBase {
     public function all(): array {
 
         $stmt = $this->conn->query('SELECT * FROM ' . $this->table);
+        if (!$stmt) {
+            return [];
+        }
         $result = $stmt->fetchAll();
         return $result;
     }
@@ -22,6 +25,9 @@ class User extends DataBase {
     public function find(int $id) {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'id' => $id
         ]);
@@ -32,6 +38,9 @@ class User extends DataBase {
     public function findByUsername($username) {
 
         $stmt = $this->conn->prepare('SELECT * FROM ' . $this->table . ' WHERE username = :username');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'username' => $username
         ]);
@@ -42,6 +51,9 @@ class User extends DataBase {
     public function add(\controller\User $user) {
 
         $stmt = $this->conn->prepare('INSERT INTO ' . $this->table . ' (username, password, email, loginattempts) VALUES (:username, :password, :email, 0)');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'username' => $user->username,
             'password' => $user->password,
@@ -54,6 +66,9 @@ class User extends DataBase {
     public function udpade(\controller\User $user) {
 
         $stmt = $this->conn->prepare('UPDATE ' . $this->table . ' SET username = :username, password = :password, email = :email, loginattempts = :loginattempts WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'username' => $user->username,
             'password' => $user->password,
@@ -68,6 +83,9 @@ class User extends DataBase {
     public function delete(\controller\User $user) {
 
         $stmt = $this->conn->prepare('DELETE FROM ' . $this->table . ' WHERE id = :id');
+        if (!$stmt) {
+            return null;
+        }
         $stmt->execute([
             'id' => $user->id
         ]);

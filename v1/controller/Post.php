@@ -24,9 +24,9 @@ class Post {
         return $this->model->all();
     }
 
-    public function find() {
+    public function get() {
 
-        return $this->model->get($this->id);
+        return $this->model->find($this->id);
     }
 
     public function store() {

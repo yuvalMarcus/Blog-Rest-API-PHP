@@ -50,13 +50,22 @@ $router->post('post', function ($response) {
         return;
     }
 
+    $result = $post->store();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Post not store");
+        $response->send();
+        return;
+    }
+
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
     $response->addMessage("Store post");
     $response->setData([
-        'id' => $post->store()
+        'id' => $result
     ]);
-
     $response->send();
 });
 
@@ -85,11 +94,21 @@ $router->put('post/:id', function ($response, $id) {
         return;
     }
 
+    $result = $post->save();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Post not update");
+        $response->send();
+        return;
+    }
+
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
     $response->addMessage("Update post");
     $response->setData([
-        'count' => $post->save()
+        'count' => $result
     ]);
 
     $response->send();
@@ -103,11 +122,21 @@ $router->delete('post/:id', function ($response, $id) {
 
     $post = new \controller\Post((int) $id);
 
+    $result = $post->remove();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Post not delete");
+        $response->send();
+        return;
+    }
+
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
     $response->addMessage("Delete post");
     $response->setData([
-        'count' => $post->remove()
+        'count' => $result
     ]);
 
     $response->send();
@@ -131,6 +160,14 @@ $router->post('session', function ($response) {
 
     $temp = new \controller\User(0, $username);
     $user = $temp->getByUsername($username);
+
+    if (!$user) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("User not found");
+        $response->send();
+        return;
+    }
 
     if ($user->loginattempts > 3) {
         $response->setHttpStatusCode(401);
@@ -170,10 +207,28 @@ $router->post('session', function ($response) {
     $loginattempts = 0;
 
     $updateUser = new \controller\User($user->id, $user->username, $user->password, $user->email, $loginattempts);
-    $updateUser->save();
+    $result = $updateUser->save();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Loginattempts not save");
+        $response->send();
+        return;
+    }
 
     $session = new \controller\Session(0, $user->id, $accesstoken, $access_token_expiry_seconds, $refreshtoken, $refresh_token_expiry_seconds);
-    $session->id = $session->store();
+    $result = $session->store();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("session not store");
+        $response->send();
+        return;
+    }
+
+    $session->id = $result;
 
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
@@ -202,8 +257,25 @@ $router->put('session/:id', function ($response) {
 
     $temp = new \controller\Session((int) $id, 0, $accesstoken, 0, $refreshtoken);
     $session = $temp->get();
+
+    if (!$session) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("session not found");
+        $response->send();
+        return;
+    }
+
     $temp = new \controller\User((int) $session->userid);
     $user = $temp->get();
+
+    if (!$user) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("user not found");
+        $response->send();
+        return;
+    }
 
     // generate access token
     // use 24 random bytes to generate a token then encode this as base64
@@ -223,7 +295,15 @@ $router->put('session/:id', function ($response) {
     $loginattempts = 0;
 
     $updateSession = new \controller\Session($session->id, $user->id, $accesstoken, $access_token_expiry_seconds, $refreshtoken, $refresh_token_expiry_seconds);
-    $updateSession->save();
+    $result = $updateSession->save();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Session not save");
+        $response->send();
+        return;
+    }
 
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
@@ -239,11 +319,21 @@ $router->delete('session/:id', function ($response, $id) {
 
     $session = new \controller\Session((int) $id, 0, $accesstoken);
 
+    $result = $session->remove();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Session not delete");
+        $response->send();
+        return;
+    }
+
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
     $response->addMessage("Delete session");
     $response->setData([
-        'count' => $session->remove()
+        'count' => $result
     ]);
 
     $response->send();

@@ -78,9 +78,9 @@ $router->post('post', function ($response) {
 
 $router->put('post/:id', function ($response, $id) {
 
-    //if (!isAuth($response)) {
-        //return;
-    //}
+    if (!isAuth($response)) {
+        return;
+    }
 
     $name = !empty($_POST['name']) ? $_POST['name'] : '';
     $content = !empty($_POST['content']) ? $_POST['content'] : '';
@@ -96,7 +96,6 @@ $router->put('post/:id', function ($response, $id) {
         $response->setData([
             'post' => $post
         ]);
-
         $response->send();
         return;
     }
@@ -351,7 +350,5 @@ $router->end(function ($response) {
     $response->setSuccess(false);
     $response->setHttpStatusCode(404);
     $response->addMessage("not found");
-    $response->setData([]);
-
     $response->send();
 });

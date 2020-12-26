@@ -78,9 +78,9 @@ $router->post('post', function ($response) {
 
 $router->put('post/:id', function ($response, $id) {
 
-    if (!isAuth($response)) {
-        return;
-    }
+    //if (!isAuth($response)) {
+        //return;
+    //}
 
     $name = !empty($_POST['name']) ? $_POST['name'] : '';
     $content = !empty($_POST['content']) ? $_POST['content'] : '';

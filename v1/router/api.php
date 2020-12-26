@@ -17,11 +17,19 @@ $router->get('post/:id', function ($response, $id) {
 
     $post = new \controller\Post((int) $id);
 
+    $result = $post->get();
+
+    if (!$result) {
+        $response->setSuccess(false);
+        $response->setHttpStatusCode(500);
+        $response->addMessage("Post not found");
+        $response->send();
+        return;
+    }
+
     $response->setSuccess(true);
     $response->setHttpStatusCode(200);
     $response->addMessage("Singel post");
-    $response->setData($post->get());
-
     $response->send();
 });
 
@@ -45,7 +53,6 @@ $router->post('post', function ($response) {
         $response->setData([
             'post' => $post
         ]);
-
         $response->send();
         return;
     }
